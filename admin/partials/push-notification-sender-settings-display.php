@@ -305,5 +305,3 @@ function save_android_options() {
 		update_option( 'pns_send_to_android_via', $pns_send_to_android_via );
 	}
 }
-
-?>
