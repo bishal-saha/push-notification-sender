@@ -11,8 +11,8 @@
  * @subpackage Push_Notification_Sender/includes
  */
 
-require_once plugin_dir_path( __FILE__ ) . '/admin/api/class-push-notification-sender-android.php';
-require_once plugin_dir_path( __FILE__ ) . '/admin/api/class-push-notification-sender-ios.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-push-notification-sender-android.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-push-notification-sender-ios.php';
 
 /**
  * The core plugin class to send push notication api.
@@ -30,8 +30,8 @@ class Push_Notification_Sender_API {
 	 * Send notification
 	 *
 	 * @since  1.0.0
-	 * @param  Array  $user_devices user device token.
-	 * @param  String $message text message to send.
+	 * @param  array  $user_devices user device token.
+	 * @param  string $message text message to send.
 	 */
 	function send_notification( $user_devices, $message ) {
 
