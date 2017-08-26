@@ -10,6 +10,7 @@
  * @package    Push_Notification_Sender
  * @subpackage Push_Notification_Sender/admin/partials
  */
+
 global $wp, $wpdb;
 
 require_once plugin_dir_path( dirname( __FILE__ ) ) . '/api/class-push-notification-sender-api.php';
@@ -77,13 +78,13 @@ $all_users = $wpdb->get_results( "SELECT ID, user_login, user_nicename FROM $pns
 $error         = false;
 $error_ios     = false;
 $error_android = false;
-$is_submitted  = false; // checks whether form submitted or not
+$is_submitted  = false; // checks whether form submitted or not.
 
 if ( isset( $_POST['send_now_button'] ) ) {
 	$is_submitted = true;
 
 	if ( isset( $_POST['selected_user'] ) ) {
-		$selected_users_id = sanitize_text_field( $_POST['selected_user'] );
+		$selected_users_id = $_POST['selected_user'] ;
 	} else {
 		$selected_users_id = array();
 	}
@@ -108,7 +109,7 @@ if ( isset( $_POST['send_now_button'] ) ) {
 		//exit;
 	} else {
 		if ( ( ! empty( $selected_users_id ) ) && ( ! empty( $all_device_tokens ) ) ) {
-			$all_userDevices = array();
+			$all_user_devices = array();
 			$message         = array(
 				"message" => sanitize_textarea_field( $_POST['message_text'] ),
 				"title"   => sanitize_text_field( $_POST['msg_title'] )
@@ -119,20 +120,26 @@ if ( isset( $_POST['send_now_button'] ) ) {
 
 				foreach ( $user_data_array as $user_data ) {
 					if ( ! empty( $user_data->os_type ) ) {
-						$deviceType = $user_data->os_type;
+						$device_type = $user_data->os_type;
 					} else {
-						$deviceType = '';
+						$device_type = '';
 					}
 					if ( ! empty( $user_data->device_token ) ) {
-						$deviceToken = $user_data->device_token;
+						$device_token = $user_data->device_token;
 					} else {
-						$deviceToken = '';
+						$device_token = '';
 					}
 
-					if ( $deviceType == 'android' && $only_android != '' ) {
-						array_push( $all_userDevices, array( 'token' => $deviceToken, 'is_Android' => true ) );
-					} elseif ( $deviceType == 'ios' && $only_ios != '' ) {
-						array_push( $all_userDevices, array( 'token' => $deviceToken, 'is_IOS' => true ) );
+					if ( 'android' === $device_type && '' !== $only_android ) {
+						array_push(
+                            $all_user_devices,
+                            array(
+                                'token' => $device_token,
+                                'is_Android' => true
+                            )
+                        );
+					} elseif ( $device_type == 'ios' && $only_ios != '' ) {
+						array_push( $all_user_devices, array( 'token' => $device_token, 'is_IOS' => true ) );
 					}
 				}
 			}
@@ -154,11 +161,11 @@ if ( isset( $_POST['send_now_button'] ) ) {
 			}
 
 			if ( $error == false ) {
-				$Push_Notification_Sender_API_Obj = new Push_Notification_Sender_API();
-				$regIdChunk                       = array_chunk( $all_userDevices, 100 );
+				$push_notification_sender_api_obj = new Push_Notification_Sender_API();
+				$reg_id_chunk = array_chunk( $all_user_devices, 100 );
 
-				foreach ( $regIdChunk as $RegId ) {
-					$Push_Notification_Sender_API_Obj->send_notification( $RegId, $message );
+				foreach ( $reg_id_chunk as $reg_id ) {
+					$push_notification_sender_api_obj->send_notification( $reg_id, $message );
 				}
 			}
 		} else {
@@ -225,8 +232,7 @@ if ( isset( $_POST['send_now_button'] ) ) {
                                     <tr>
                                         <td><?php _e( 'Select Users' ) ?>:</td>
                                         <td>
-                                            <select title="Select User" id="selected_user" name="selected_user[]" multiple=multiple
-                                                    style="margin: 20px;width:300px;" required>
+                                            <select title="Select User" id="selected_user" name="selected_user[]" multiple=multiple style="margin: 20px;width:300px;" required>
 												<?php
 												foreach ( $all_users as $user ) {
 													echo '<option value=' . $user->ID . '>' . $user->user_nicename . '</option>';
