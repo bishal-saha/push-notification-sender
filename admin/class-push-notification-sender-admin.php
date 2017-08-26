@@ -129,8 +129,7 @@ class Push_Notification_Sender_Admin {
 				'All Push Notifications',
 				'administrator',
 				'push-notification-sender',
-				array( $this, 'push_notification_sender_list_html' ),
-				'push-notifications-sender'
+				array( $this, 'push_notification_sender_list_html' )
 			);
 
 			add_submenu_page(
@@ -189,7 +188,7 @@ class Push_Notification_Sender_Admin {
 			if ( isset( $request_uri_referrer_parts[1] ) ) {
 				$current_page_url = $request_uri_referrer_parts[1];
 
-				if ( $current_page_url == 'push-notification-sender-settings&tab=ios_tab' ) {
+				if ( 'push-notification-sender-settings&tab=ios_tab' === $current_page_url ) {
 					$mydir         = '/pns-ioscert';
 					$param['path'] = $param['basedir'] . $mydir;
 					$param['url']  = $param['baseurl'] . $mydir;
@@ -204,46 +203,133 @@ class Push_Notification_Sender_Admin {
 	 * Upload Certificate Extension:
 	 *
 	 * @since    1.0.0
+	 * @param array $mime_types mime type.
+	 * @return string  $mime_types mime type
 	 */
 	public function push_notification_sender_mime_types( $mime_types ) {
-		$mime_types['pem'] = 'application/x-pem-file'; //Adding .pem extension
-		$mime_types['p12'] = 'application/x-pkcs12';  //Adding photoshop files
+		$mime_types['pem'] = 'application/x-pem-file'; // Adding .pem extension.
+		$mime_types['p12'] = 'application/x-pkcs12';  // Adding photoshop files.
 
 		return $mime_types;
 	}
 
-	# For get all system users with is device token and device type.
-	public function all_push_notification_getAllSystemUsers() {
+	/**
+	 * Get all system users with is device token and device type.
+	 *
+	 * @since    1.0.0
+	 */
+	public function push_notification_sender_get_all_system_users() {
 
 		global $wpdb;
 		$only_ios     = get_option( 'pns_send_to_ios' );
 		$only_android = get_option( 'pns_send_to_android' );
 
 		$table_push_notification_token = $wpdb->prefix . 'push_notification_sender_token';
-		$select_all_users              = $wpdb->get_results( "SELECT device_token,os_type FROM $table_push_notification_token", ARRAY_A );
 
-		$all_userDevices = array();
+		$select_all_users = $wpdb->get_results(
+			" SELECT device_token, os_type 
+ 					FROM   $table_push_notification_token",ARRAY_A
+		);
+
+		$all_user_devices = array();
 
 		foreach ( $select_all_users as $select_sql_data ) {
-
 			if ( ! empty( $select_sql_data['os_type'] ) ) {
-				$deviceType = $select_sql_data['os_type'];
+				$device_type = $select_sql_data['os_type'];
 			} else {
-				$deviceType = '';
+				$device_type = '';
 			}
 			if ( ! empty( $select_sql_data['device_token'] ) ) {
-				$deviceToken = $select_sql_data['device_token'];
+				$device_token = $select_sql_data['device_token'];
 			} else {
-				$deviceToken = '';
+				$device_token = '';
 			}
 
-			if ( $deviceType == 'android' && $only_android == 'yes' ) {
-				array_push( $all_userDevices, array( 'token' => $deviceToken, 'is_Android' => true ) );
-			} elseif ( $deviceType == 'ios' && $only_ios == 'yes' ) {
-				array_push( $all_userDevices, array( 'token' => $deviceToken, 'is_Android' => false ) );
+			if ( 'android' === $device_type && 'yes' === $only_android ) {
+				array_push(
+					$all_user_devices,
+					array(
+						'token' => $device_token,
+						'is_Android' => true,
+					)
+				);
+			} elseif ( 'ios' === $device_type && 'yes' === $only_ios ) {
+				array_push(
+					$all_user_devices,
+					array(
+						'token' => $device_token,
+						'is_Android' => false,
+					)
+				);
+			}
+		}
+		return $all_user_devices;
+	}
+
+	/**
+	 * Send notifications on post update/insert/edit:
+	 *
+	 * @since    1.0.0
+	 */
+	public function push_notification_sender_save_post() {
+		$error = false;
+		$only_ios     = get_option( 'pns_send_to_ios' );
+		$only_android = get_option( 'pns_send_to_android' );
+		$post_title   = sanitize_text_field( $_POST['post_title'] );
+		$post_content = sanitize_text_field( $_POST['post_content'] );
+
+		$message = array(
+			'title' => $post_title,
+			'message' => $post_content,
+		);
+
+		$all_user_devices = $this->push_notification_sender_get_all_system_users();
+
+		if ( 'yes' === $only_ios ) {
+			$ios_certi_name = get_option( 'ios_certi_name' );
+			if ( ( empty( $ios_certi_name )) || ( strlen( $ios_certi_name ) <= 0) ) {
+				$error = 'true';
 			}
 		}
 
-		return $all_userDevices;
+		if ( 'yes' === $only_android ) {
+			$pns_google_api_key = get_option( 'pns_google_api_key' );
+			if ( ( empty( $pns_google_api_key ) ) || ( strlen( $pns_google_api_key ) <= 0 ) ) {
+				$error = 'true';
+			}
+		}
+
+		if ( 'false' === $error ) {
+			$push_notification_sender_api_obj = new Push_Notification_Sender_API();
+			$push_notification_sender_api_obj->send_notification( $all_user_devices, $message );
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Display error when notifications not send.
+	 *
+	 * @since    1.0.0
+	 * @param array $messages set the message.
+	 * @return array  $message returns the message.
+	 */
+	public function push_notification_sender_post_published( $messages = array() ) {
+		global $post_ID , $error;
+
+		if ( ! empty( $error ) ) {
+			$messages['post'][1] = sprintf( __( 'Post updated. <a href="%s">View post</a>, notification not send Please check Setting page.' ),  esc_url( get_permalink( $post_ID ) ) );
+			$messages['post'][6] = sprintf( __( 'Post published. <a href="%s">View post</a>, notification not send Please check Setting page.' ), esc_url( get_permalink( $post_ID ) ) );
+
+			$messages['page'][1] = sprintf( __( 'Page updated. <a href="%s">View page</a>, notification not send Please check Setting page.' ), esc_url( get_permalink( $post_ID ) ) );
+			$messages['page'][6] = sprintf( __( 'Page published. <a href="%s">View page</a>, notification not send Please check Setting page.' ), esc_url( get_permalink( $post_ID ) ) );
+		} else {
+			$messages['post'][1] = sprintf( __( 'Post updated. <a href="%s">View post</a>, Notification Sent Successfully.' ), esc_url( get_permalink( $post_ID ) ) );
+			$messages['post'][6] = sprintf( __( 'Post published. <a href="%s">View post</a>, Notification Sent Successfully.' ), esc_url( get_permalink( $post_ID ) ) );
+
+			$messages['page'][1] = sprintf( __( 'Page updated. <a href="%s">View page</a>  , Notification Sent Successfully.' ), esc_url( get_permalink( $post_ID ) ) );
+			$messages['page'][6] = sprintf( __( 'Page published. <a href="%s">View page</a> , Notification Sent Successfully.' ), esc_url( get_permalink( $post_ID ) ) );
+		}
+		return $messages;
 	}
 }

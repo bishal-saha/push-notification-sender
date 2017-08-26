@@ -11,11 +11,13 @@
  * @subpackage Push_Notification_Sender/includes
  */
 
+/** @noinspection PhpIncludeInspection */
 require_once plugin_dir_path( __FILE__ ) . 'class-push-notification-sender-android.php';
+/** @noinspection PhpIncludeInspection */
 require_once plugin_dir_path( __FILE__ ) . 'class-push-notification-sender-ios.php';
 
 /**
- * The core plugin class to send push notication api.
+ * The core plugin class to send push notification api.
  *
  * This is used to define api.
  *

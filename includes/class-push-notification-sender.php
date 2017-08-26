@@ -154,10 +154,12 @@ class Push_Notification_Sender {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'push_notification_sender_admin_menu' );
+		$this->loader->add_action( 'publish_post', $plugin_admin, 'push_notification_sender_save_post', 10, 2 );
+		$this->loader->add_action( 'publish_page', $plugin_admin, 'push_notification_sender_save_post', 10, 2 );
 
 		$this->loader->add_filter( 'upload_dir', $plugin_admin, 'push_notification_sender_certificate_dir' );
 		$this->loader->add_filter( 'upload_mimes', $plugin_admin, 'push_notification_sender_mime_types' );
-
+		$this->loader->add_filter( 'post_updated_messages', $plugin_admin, 'push_notification_sender_post_published' );
 	}
 
 	/**
@@ -173,7 +175,8 @@ class Push_Notification_Sender {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
+		$this->loader->add_action( 'rest_api_init', $plugin_public, 'push_notification_sender_apn_register_api' );
+		$this->loader->add_action('wp_insert_comment', $plugin_public, 'push_notification_sender_comment_inserted', 99, 2);
 	}
 
 	/**

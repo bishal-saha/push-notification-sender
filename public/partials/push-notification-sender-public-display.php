@@ -11,6 +11,3 @@
  * @package    Push_Notification_Sender
  * @subpackage Push_Notification_Sender/public/partials
  */
-?>
-
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->

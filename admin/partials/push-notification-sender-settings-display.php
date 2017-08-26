@@ -16,11 +16,11 @@ global $wp;
 $current_url = "//" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $phpself_url = $_SERVER['PHP_SELF'];
 
-if ( isset( $_POST['is_submitted_general_tab'] ) && $_POST['is_submitted_general_tab'] == 'yes' ) {
+if ( isset( $_POST['is_submitted_general_tab'] ) && 'yes' === $_POST['is_submitted_general_tab'] ) {
 	save_general_options();
-} else if ( isset( $_POST['is_submitted_ios_tab'] ) && $_POST['is_submitted_ios_tab'] == 'yes' ) {
+} else if ( isset( $_POST['is_submitted_ios_tab'] ) && 'yes' === $_POST['is_submitted_ios_tab'] ) {
 	save_ios_options();
-} else if ( isset( $_POST['is_submitted_android_tab'] ) && $_POST['is_submitted_android_tab'] == 'yes' ) {
+} else if ( isset( $_POST['is_submitted_android_tab'] ) && 'yes' === $_POST['is_submitted_android_tab'] ) {
 	save_android_options();
 }
 
@@ -35,7 +35,7 @@ if ( isset( $_POST['is_submitted_general_tab'] ) && $_POST['is_submitted_general
 <div id="poststuff" class="metabox-holder has-right-sidebar">
     <div class="has-sidebar sm-padded">
         <div class="meta-box-sortabless">
-			<?php $active_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'general_tab'; ?>
+			<?php $active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'general_tab'; ?>
             <h2 class="nav-tab-wrapper">
                 <a href="?page=push-notification-sender-settings&tab=general_tab"
                    class="nav-tab <?php echo $active_tab == 'general_tab' ? 'nav-tab-active' : ''; ?>"><?php _e( 'General', 'push-notifications-sender' ); ?></a>
@@ -87,9 +87,8 @@ function print_general_options_box() {
                 <tr valign="top">
                     <td>
                         <input type="hidden" name="is_submitted_general_tab" value="yes"/>
-                        <input type="checkbox" name="pns_on_new_post_publish"
-                               value="yes" <?php echo( $pns_on_new_post_publish == 'yes' ? 'checked' : '' ); ?>>
-						<?php _e( 'A new post is published' ); ?>
+                        <input  type="checkbox" name="pns_on_new_post_publish"  title="When a new post is published" value="yes" <?php echo( $pns_on_new_post_publish === 'yes' ? 'checked' : '' ); ?>>
+                        <label for="pns_on_new_post_publish"><?php _e( 'A new post is published' ); ?></label>
                         <br>
                         <input type="checkbox" name="pns_on_new_page_save"
                                value="yes" <?php echo( $pns_on_new_page_save == 'yes' ? 'checked' : '' ); ?>>
@@ -105,7 +104,6 @@ function print_general_options_box() {
                     </td>
                 </tr>
             </table>
-            </p>
         </div>
     </div>
 
@@ -113,10 +111,10 @@ function print_general_options_box() {
 }
 
 function save_general_options() {
-	$pns_on_new_post_publish  = isset( $_POST['pns_on_new_post_publish'] ) ? $_POST['pns_on_new_post_publish'] : "no";
-	$pns_on_new_page_save     = isset( $_POST['pns_on_new_page_save'] ) ? $_POST['pns_on_new_page_save'] : "no";
-	$pns_on_new_user_register = isset( $_POST['pns_on_new_user_register'] ) ? $_POST['pns_on_new_user_register'] : "no";
-	$pns_on_new_comment_post  = isset( $_POST['pns_on_new_comment_post'] ) ? $_POST['pns_on_new_comment_post'] : "no";
+	$pns_on_new_post_publish  = isset( $_POST['pns_on_new_post_publish'] ) ? sanitize_text_field( $_POST['pns_on_new_post_publish'] ) : "no";
+	$pns_on_new_page_save     = isset( $_POST['pns_on_new_page_save'] ) ? sanitize_text_field( $_POST['pns_on_new_page_save'] ) : "no";
+	$pns_on_new_user_register = isset( $_POST['pns_on_new_user_register'] ) ? sanitize_text_field( $_POST['pns_on_new_user_register'] ) : "no";
+	$pns_on_new_comment_post  = isset( $_POST['pns_on_new_comment_post'] ) ? sanitize_text_field( $_POST['pns_on_new_comment_post'] ) : "no";
 
 	if ( ( $pns_on_new_comment_post == "no" ) && ( $pns_on_new_user_register == "no" ) && ( $pns_on_new_page_save == "no" ) && ( $pns_on_new_post_publish == "no" ) ) {
 		$pns_message_er = __( 'Please select at least one checkbox box to send the push notification.' );
@@ -145,24 +143,30 @@ function print_ios_options_box() {
     <div class="postbox">
 
         <div class="inside">
-            <p>
             <table width="100%">
                 <tr valign="top">
                     <td>
                         <input type="hidden" name="is_submitted_ios_tab" value="yes"/>
-                        <input type="checkbox" name="pns_send_to_ios"
-                               value="yes" <?php echo( $pns_send_to_ios == 'yes' ? 'checked' : '' ); ?>>
-						<?php _e( 'Send Push notifications to iOS devices' ); ?>
+                        <label for="pns_send_to_ios">
+                            <input type="checkbox" name="pns_send_to_ios"
+                                   value="yes" <?php echo( $pns_send_to_ios == 'yes' ? 'checked' : '' ); ?>>
+                            <?php _e( 'Send Push notifications to iOS devices' ); ?>
+                        </label>
                         <hr>
-                        <input type="radio" name="pns_push_to_ios"
-                               value="send_via_sandbox" <?php echo( $pns_send_via_sandbox == 'yes' ? 'checked' : '' ); ?>>
-						<?php _e( 'Send Push notifications to iOS devices using sandbox environment' ); ?>
+                        <label for="pns_push_to_ios">
+                            <input type="radio" name="pns_push_to_ios"
+                                   value="send_via_sandbox" <?php echo( $pns_send_via_sandbox == 'yes' ? 'checked' : '' ); ?>>
+                            <?php _e( 'Send Push notifications to iOS devices using sandbox environment' ); ?>
+                        </label>
                         <br>
+                        <label for="pns_push_to_ios">
                         <input type="radio" name="pns_push_to_ios"
                                value="send_via_production" <?php echo( $pns_send_via_production == 'yes' ? 'checked' : '' ); ?>>
-						<?php _e( 'Send Push notifications to iOS devices using Production environment' ); ?>
+
+                            <?php _e( 'Send Push notifications to iOS devices using Production environment' ); ?>
+                        </label>
                         <hr>
-                        <label for="upload_ios_certi">
+                        <label for="pns_upload_ios_certi">
                             <input id="pns_upload_ios_certi" type="text" size="36" name="pns_upload_ios_certi"
                                    value="<?php echo $pns_ios_certi_path; ?>"/>
                             <input id="pns_upload_image_button" name="pns_upload_image_button" type="button"
@@ -174,7 +178,6 @@ function print_ios_options_box() {
                     </td>
                 </tr>
             </table>
-            </p>
         </div>
     </div>
 
@@ -190,11 +193,11 @@ function save_ios_options() {
 	} else {
 
 		$pns_send_to_ios    = isset( $_POST['pns_send_to_ios'] ) ? $_POST['pns_send_to_ios'] : 'no';
-		$pns_ios_certi_path = $_POST['pns_upload_ios_certi'];
-		$pns_ios_certi_name = $_POST['pns_upload_ios_certi_name'];
-		$pns_push_to_ios    = $_POST['pns_push_to_ios'];
+		$pns_ios_certi_path = sanitize_text_field( $_POST['pns_upload_ios_certi'] );
+		$pns_ios_certi_name = sanitize_text_field( $_POST['pns_upload_ios_certi_name'] );
+		$pns_push_to_ios    = sanitize_text_field( $_POST['pns_push_to_ios'] );
 
-		if ( $pns_push_to_ios == 'send_via_production' ) {
+		if ( 'send_via_production' === $pns_push_to_ios ) {
 			$pns_send_via_production = "yes";
 			$pns_send_via_sandbox    = "no";
 		} else {
@@ -233,7 +236,7 @@ function print_android_options_box() {
                 messages: {
                     pns__google_api_key: "Please Enter Google Api Key",
                     pns_send_to_android_via: "Please Select option",
-                    pns_send_to_android: "Please Select option for send notifications to android devices",
+                    pns_send_to_android: "Please Select option for send notifications to android devices"
 
                 },
                 errorPlacement: function (error, element) {
@@ -285,7 +288,6 @@ function print_android_options_box() {
                     </td>
                 </tr>
             </table>
-            </p>
         </div>
     </div>
 
@@ -296,9 +298,9 @@ function save_android_options() {
 	if ( ! wp_verify_nonce( $_POST['pns_android_options'], 'pns_android_options' ) ) {
 		print 'Sorry, your nonce did not verify.';
 	} else {
-		$pns_send_to_android     = isset( $_POST['pns_send_to_android'] ) ? $_POST['pns_send_to_android'] : 'no';
-		$pns_google_api_key      = $_POST['pns_google_api_key'];
-		$pns_send_to_android_via = $_POST['pns_send_to_android_via'];
+		$pns_send_to_android     = isset( $_POST['pns_send_to_android'] ) ? sanitize_text_field( $_POST['pns_send_to_android'] ) : 'no';
+		$pns_google_api_key      = sanitize_text_field( $_POST['pns_google_api_key'] );
+		$pns_send_to_android_via = sanitize_text_field( $_POST['pns_send_to_android_via'] );
 
 		update_option( 'pns_send_to_android', $pns_send_to_android );
 		update_option( 'pns_google_api_key', $pns_google_api_key );

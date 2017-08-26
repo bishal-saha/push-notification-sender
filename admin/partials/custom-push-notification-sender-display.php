@@ -24,7 +24,7 @@ jQuery(document).ready( function() { // initialize the pqSelect widget.
         }).pqSelect('close');
 
         // validate signup form on keyup and submit
-        jQuery("#custom_pushnotification_form").validate({
+        jQuery("#custom_push_notification_form").validate({
             ignore: '',
             rules: {
                 'selected_user[]': {
@@ -72,7 +72,7 @@ $current_url  = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $redirect_url = '?page=custom-push-notification-sender';
 
 $pns_users = $wpdb->prefix . 'users';
-$all_users = $wpdb->get_results( "SELECT ID,user_login,user_nicename FROM $pns_users" );
+$all_users = $wpdb->get_results( "SELECT ID, user_login, user_nicename FROM $pns_users" );
 
 $error         = false;
 $error_ios     = false;
@@ -83,25 +83,25 @@ if ( isset( $_POST['send_now_button'] ) ) {
 	$is_submitted = true;
 
 	if ( isset( $_POST['selected_user'] ) ) {
-		$selected_users_id = $_POST['selected_user'];
+		$selected_users_id = sanitize_text_field( $_POST['selected_user'] );
 	} else {
 		$selected_users_id = array();
 	}
 
 	if ( isset( $_POST['only_ios'] ) ) {
-		$only_ios = $_POST['only_ios'];
+		$only_ios = sanitize_text_field( $_POST['only_ios']  );
 	} else {
 		$only_ios = '';
 	}
 
 	if ( isset( $_POST['only_android'] ) ) {
-		$only_android = $_POST['only_android'];
+		$only_android = sanitize_text_field( $_POST['only_android'] );
 	} else {
 		$only_android = '';
 	}
 
 	$table_push_notification_sender_token = $wpdb->prefix . 'push_notification_sender_tokens';
-	$all_device_tokens                    = $wpdb->get_results( "SELECT device_token FROM $table_push_notification_sender_token" );
+	$all_device_tokens = $wpdb->get_results( "SELECT device_token FROM $table_push_notification_sender_token" );
 
 	if ( ! wp_verify_nonce( $_POST['apn_custom_message'], 'custom_message' ) ) {
 		print 'Sorry, your nonce did not verify.';
@@ -110,8 +110,8 @@ if ( isset( $_POST['send_now_button'] ) ) {
 		if ( ( ! empty( $selected_users_id ) ) && ( ! empty( $all_device_tokens ) ) ) {
 			$all_userDevices = array();
 			$message         = array(
-				"message" => $_POST['message_text'],
-				"title"   => $_POST['msg_title']
+				"message" => sanitize_textarea_field( $_POST['message_text'] ),
+				"title"   => sanitize_text_field( $_POST['msg_title'] )
 			);
 
 			foreach ( $selected_users_id as $selected_user_id ) {
@@ -225,7 +225,7 @@ if ( isset( $_POST['send_now_button'] ) ) {
                                     <tr>
                                         <td><?php _e( 'Select Users' ) ?>:</td>
                                         <td>
-                                            <select id="selected_user" name="selected_user[]" multiple=multiple
+                                            <select title="Select User" id="selected_user" name="selected_user[]" multiple=multiple
                                                     style="margin: 20px;width:300px;" required>
 												<?php
 												foreach ( $all_users as $user ) {
@@ -241,7 +241,7 @@ if ( isset( $_POST['send_now_button'] ) ) {
                                     </tr>
                                     <tr>
                                         <td><?php _e( 'Message Title' ) ?>:</td>
-                                        <td><input type="text" name="msg_title" required></td>
+                                        <td><input title="Message Title" type="text" name="msg_title" required></td>
                                     </tr>
                                     <tr>
                                         <td></td>
@@ -249,7 +249,7 @@ if ( isset( $_POST['send_now_button'] ) ) {
                                     </tr>
                                     <tr>
                                         <td><?php _e( 'Message Text' ) ?>:</td>
-                                        <td><textarea rows="5" cols="25" name="message_text" required></textarea></td>
+                                        <td><textarea title="Message" rows="5" cols="25" name="message_text" required></textarea></td>
                                     </tr>
                                     <tr>
                                         <td></td>

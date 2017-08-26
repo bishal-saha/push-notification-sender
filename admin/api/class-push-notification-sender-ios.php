@@ -48,7 +48,9 @@ class Push_Notification_Sender_IOS {
 		$error = false;
 
 		// post Option.
-		$msg_title    = $message['title'];
+		/** @noinspection PhpIllegalStringOffsetInspection */
+		$message_title    = $message['title'];
+		/** @noinspection PhpIllegalStringOffsetInspection */
 		$message_text = $message['message'];
 
 		if ( empty( $pns_ios_certi_name ) || strlen( $pns_ios_certi_name ) <= 0 ) {
@@ -71,7 +73,7 @@ class Push_Notification_Sender_IOS {
 		}
 
 		if ( ! $fp ) {
-			exit( "Failed to connect apple gateway: $err $errstr" . PHP_EOL );
+			exit( "Failed to connect apple gateway:" . $err . $errstr . PHP_EOL );
 		} else {
 			//
 		}
@@ -93,8 +95,8 @@ class Push_Notification_Sender_IOS {
 			$body['aps'] = array(
 				'badge' => + 1,
 				'alert' => array(
-					'title' => $message['title'],
-					'body'  => $message['message'],
+					'title' => $message_title,
+					'body'  => $message_text,
 				),
 				'sound' => 'default'
 			);
@@ -110,15 +112,15 @@ class Push_Notification_Sender_IOS {
 			//Send it to the server
 			$results[] = fwrite( $fp, $msg, strlen( $msg ) );
 
-			// Insert msgs into pushnotification log table.
+			// Insert message into push notification log table.
 			global $wpdb;
-			$current_time                        = current_time( 'mysql' );
+			$current_time  = current_time( 'mysql' );
 			$table_push_notification_sender_logs = $wpdb->prefix . 'push_notification_sender_logs';
 
 			$wpdb->insert(
 				$table_push_notification_sender_logs,
 				array(
-					'push_title'     => $msg_title,
+					'push_title'     => $message_title,
 					'push_message'   => $message_text,
 					'push_sent'      => 1,
 					'push_send_date' => $current_time,

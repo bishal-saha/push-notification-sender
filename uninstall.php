@@ -39,18 +39,18 @@ $table_tokens = $wpdb->prefix . 'push_notification_sender_tokens';
 $wpdb->query( "DROP TABLE IF EXISTS $table_logs" );
 $wpdb->query( "DROP TABLE IF EXISTS $table_tokens" );
 
-//Delete saved options
-delete_option( 'pns_on_new_post_publish', '' );
-delete_option( 'pns_on_new_page_save', '' );
-delete_option( 'pns_on_new_user_register', '' );
-delete_option( 'pns_on_new_comment_post', '' );
+// Delete saved options.
+delete_option( 'pns_on_new_post_publish' );
+delete_option( 'pns_on_new_page_save' );
+delete_option( 'pns_on_new_user_register' );
+delete_option( 'pns_on_new_comment_post' );
 
-delete_option( 'pns_send_to_android', '' );
-delete_option( 'pns_send_to_ios', '' );
-delete_option( 'pns_send_via_production', '' );
-delete_option( 'pns_send_via_sandbox', '' );
+delete_option( 'pns_send_to_android' );
+delete_option( 'pns_send_to_ios' );
+delete_option( 'pns_send_via_production' );
+delete_option( 'pns_send_via_sandbox' );
 
-delete_option( 'pns_ios_certificate_path', '' );
-delete_option( 'pns_ios_certificate_name', '' );
-delete_option( 'pns_google_api_key', '' );
-delete_option( 'pns_send_to_android_via', '' );
+delete_option( 'pns_ios_certificate_path' );
+delete_option( 'pns_ios_certificate_name' );
+delete_option( 'pns_google_api_key' );
+delete_option( 'pns_send_to_android_via' );

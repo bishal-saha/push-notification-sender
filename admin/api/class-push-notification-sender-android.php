@@ -34,8 +34,8 @@ class Push_Notification_Sender_Android {
 	 * @return string $error return the error message if any.
 	 */
 	function send_to_android( $registration_ids, $message ) {
-		ini_set( 'max_execution_time', 600 ); //600 seconds = 10 minutes
-		ini_set( "memory_limit", "512M" );
+		ini_set( 'max_execution_time', 600 );
+		ini_set( 'memory_limit', '512M' );
 		set_time_limit( 0 );
 
 		$error = false;
@@ -99,6 +99,7 @@ class Push_Notification_Sender_Android {
 			'Content-Type: application/json',
 		);
 
+		// TODO: use wp_remote_get instead of CURL
 		// Open connection.
 		$ch = curl_init();
 
@@ -110,7 +111,7 @@ class Push_Notification_Sender_Android {
 
 		// Disabling SSL Certificate support temporarly.
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode( $fields ) );
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, wp_json_encode( $fields ) );
 
 		// Execute post.
 		$result = curl_exec( $ch );

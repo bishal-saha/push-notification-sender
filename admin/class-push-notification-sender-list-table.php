@@ -216,8 +216,8 @@ class Push_Notification_Sender_List_Table extends WP_List_Table {
 		$push_notification_logs = $wpdb->prefix . 'push_notification_sender_logs';
 		$paged                  = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) * $per_page : 0;
 		$where                  = '';
-		$orderby                = ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) ) ) ? $_REQUEST['orderby'] : 'log_id';
-		$order                  = ( isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], array(	'asc', 'desc' ) ) ) ? $_REQUEST['order'] : 'desc';
+		$orderby                = ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) ) ) ? sanitize_text_field( $_REQUEST['orderby'] ) : 'log_id';
+		$order                  = ( isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], array(	'asc', 'desc' ) ) ) ? sanitize_text_field( $_REQUEST['order'] ) : 'desc';
 		$data                   = $wpdb->get_results( "SELECT * FROM $push_notification_logs $where ORDER BY $orderby $order LIMIT $per_page OFFSET $paged", ARRAY_A );
 		$columns                = $this->get_columns();
 		$hidden                 = array();
