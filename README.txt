@@ -1,114 +1,64 @@
-=== Plugin Name ===
-Contributors: (this should be a list of wordpress.org userid's)
+=== Push Notification Sender for WP ===
+Contributors: bishalsaha
 Donate link: http://gentryx.com/bishalsaha
-Tags: comments, spam
+Tags: push notification, send push notification, launch push notification, push notification launcher, send to android, send to iphone, send to mobile, push notification for android, push notification for ios, push notification for iphone, push notification for mobile, google cloud nessaging, firebase cloud nessaging, android notification, ios notification, iphone notification , on new post published, on new page published, on new comment post, send custom message to wp User
 Requires at least: 3.0.1
-Tested up to: 3.4
-Stable tag: 4.3
+Tested up to: 4.7
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
+Easiest way to launch push notification from your WordPress website to iOs and Android devices. Ready to go, no third party any integration required.
 
 == Description ==
 
-This is the long description.  No limit, and you can use Markdown (as well as in the following sections).
+Launch push notification to all iOS and Android devices automatically when an Add/Edit a Post/Page and even when a new comment is added to any post. No any third party software integration required. You can also send a custom push notification to any individual registered member.
 
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
+== Key Features ==
+Supports following methods
 
-A few notes about the sections above:
+* Apple Push Notification service (APNs)
+* Google Cloud Messaging (GCM)
+* Firebase Cloud Messaging (FCM)
 
-*   "Contributors" is a comma separated list of wp.org/wp-plugins.org usernames
-*   "Tags" is a comma separated list of tags that apply to the plugin
-*   "Requires at least" is the lowest version that the plugin will work on
-*   "Tested up to" is the highest version that you've *successfully used to test the plugin*. Note that it might work on
-higher versions... this is just the highest one you've verified.
-*   Stable tag should indicate the Subversion "tag" of the latest stable version, or "trunk," if you use `/trunk/` for
-stable.
+This plugin have options to:
 
-    Note that the `readme.txt` of the stable tag is the one that is considered the defining one for the plugin, so
-if the `/trunk/readme.txt` file says that the stable tag is `4.3`, then it is `/tags/4.3/readme.txt` that'll be used
-for displaying information about the plugin.  In this situation, the only thing considered from the trunk `readme.txt`
-is the stable tag pointer.  Thus, if you develop in trunk, you can update the trunk `readme.txt` to reflect changes in
-your in-development version, without having that information incorrectly disclosed about the current stable version
-that lacks those changes -- as long as the trunk's `readme.txt` points to the correct stable tag.
+1. Launch push notification to WordPress users separately.
+2. Launch push notification to users when a new page/post is published or when new comment is added to the post (administrator user)
 
-    If no stable tag is provided, it is assumed that trunk is stable, but you should specify "trunk" if that's where
-you put the stable version, in order to eliminate any doubt.
+== Required Settings ==
+To launch push notification to android devices, you need to enter the Google GCM API Key
+
+To launch push notification to iOS devices, you need to upload the Apple APNs pem certification file.
+
+This plugin have a separate API to register any devices to receive push notification. You may use this API in your mobile application and send the token to API to register the device.
+
+* WordPress 4.4 or greater
+* PHP version 5.2.4 or greater
+* MySQL version 5.0 or greater
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
-
-e.g.
-
-1. Upload `push-notification-sender.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place `<?php do_action('plugin_name_hook'); ?>` in your templates
-
-== Frequently Asked Questions ==
-
-= A question that someone might have =
-
-An answer to that question.
-
-= What about foo bar? =
-
-Answer to foo bar dilemma.
+1. Download the plugin as zip file from the plugin download link.
+2. Extract the zip file and upload the folder push-notification-sender to `/wp-content/plugins/` directory
+3. Activate the plugin from admin panel plugin listing screen.
+4. You can now configure plugin from setting screen which appears in admin menu.
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
-(or jpg, jpeg, gif).
-2. This is the second screen shot
+1. Admin Settings page.
+2. Admin Send custom push notification manually.
+3. List of Sent notifications in Admin Panel.
 
 == Changelog ==
 
 = 1.0 =
-* A change since the previous version.
-* Another change.
-
-= 0.5 =
-* List versions from most recent at top to oldest at bottom.
+* First public release.
 
 == Upgrade Notice ==
-
 = 1.0 =
-Upgrade notices describe the reason a user should upgrade.  No more than 300 characters.
+* First public release.
 
-= 0.5 =
-This version fixes a security related bug.  Upgrade immediately.
+== Translations ==
 
-== Arbitrary section ==
-
-You may provide arbitrary sections, in the same format as the ones above.  This may be of use for extremely complicated
-plugins where more information needs to be conveyed that doesn't fit into the categories of "description" or
-"installation."  Arbitrary sections will be shown below the built-in sections outlined above.
-
-== A brief Markdown Example ==
-
-Ordered list:
-
-1. Some feature
-1. Another feature
-1. Something else about the plugin
-
-Unordered list:
-
-* something
-* something else
-* third thing
-
-Here's a link to [WordPress](http://wordpress.org/ "Your favorite software") and one to [Markdown's Syntax Documentation][markdown syntax].
-Titles are optional, naturally.
-
-[markdown syntax]: http://daringfireball.net/projects/markdown/syntax
-            "Markdown is what the parser uses to process much of the readme file"
-
-Markdown uses email style notation for blockquotes and I've been told:
-> Asterisks for *emphasis*. Double it up  for **strong**.
-
-`<?php code(); // goes in backticks ?>`
+* English - default, always included
