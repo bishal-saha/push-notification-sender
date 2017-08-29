@@ -40,6 +40,8 @@ class Push_Notification_Sender_Admin {
 	 */
 	private $version;
 
+
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -52,6 +54,7 @@ class Push_Notification_Sender_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
+
 
 	}
 

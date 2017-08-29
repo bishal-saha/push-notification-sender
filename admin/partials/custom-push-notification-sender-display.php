@@ -10,16 +10,19 @@
  * @package    Push_Notification_Sender
  * @subpackage Push_Notification_Sender/admin/partials
  */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 global $wp, $wpdb;
 
 require_once plugin_dir_path( dirname( __FILE__ ) ) . '/api/class-push-notification-sender-api.php';
 ?>
 <script>
-jQuery(document).ready( function() { // initialize the pqSelect widget.
-  jQuery("#selected_user").pqSelect( {
-      multiplePlaceholder: 'Select User',
-    checkbox: true // adds checkbox to options.
+    jQuery(document).ready(function () { // initialize the pqSelect widget.
+        jQuery("#selected_user").pqSelect({
+            multiplePlaceholder: 'Select User',
+            checkbox: true // adds checkbox to options.
         }).on("change", function (evt) {
             var val = jQuery(this).val();
         }).pqSelect('close');
@@ -81,36 +84,37 @@ $error_android = false;
 $is_submitted  = false; // checks whether form submitted or not.
 
 if ( isset( $_POST['send_now_button'] ) ) {
-	$is_submitted = true;
-
-	if ( isset( $_POST['selected_user'] ) ) {
-		$selected_users_id = $_POST['selected_user'] ;
-	} else {
-		$selected_users_id = array();
-	}
-
-	if ( isset( $_POST['only_ios'] ) ) {
-		$only_ios = sanitize_text_field( $_POST['only_ios']  );
-	} else {
-		$only_ios = '';
-	}
-
-	if ( isset( $_POST['only_android'] ) ) {
-		$only_android = sanitize_text_field( $_POST['only_android'] );
-	} else {
-		$only_android = '';
-	}
-
-	$table_push_notification_sender_token = $wpdb->prefix . 'push_notification_sender_tokens';
-	$all_device_tokens = $wpdb->get_results( "SELECT device_token FROM $table_push_notification_sender_token" );
-
 	if ( ! wp_verify_nonce( $_POST['apn_custom_message'], 'custom_message' ) ) {
 		print 'Sorry, your nonce did not verify.';
 		//exit;
 	} else {
+		$is_submitted = true;
+
+		if ( isset( $_POST['selected_user'] ) ) {
+			$selected_users_id = sanitize_text_field( $_POST['selected_user'] );
+		} else {
+			$selected_users_id = array();
+		}
+
+		if ( isset( $_POST['only_ios'] ) ) {
+			$only_ios = sanitize_text_field( $_POST['only_ios'] );
+		} else {
+			$only_ios = '';
+		}
+
+		if ( isset( $_POST['only_android'] ) ) {
+			$only_android = sanitize_text_field( $_POST['only_android'] );
+		} else {
+			$only_android = '';
+		}
+
+		$table_push_notification_sender_token = $wpdb->prefix . 'push_notification_sender_tokens';
+		$all_device_tokens                    = $wpdb->get_results( "SELECT device_token FROM $table_push_notification_sender_token" );
+
+
 		if ( ( ! empty( $selected_users_id ) ) && ( ! empty( $all_device_tokens ) ) ) {
 			$all_user_devices = array();
-			$message         = array(
+			$message          = array(
 				"message" => sanitize_textarea_field( $_POST['message_text'] ),
 				"title"   => sanitize_text_field( $_POST['msg_title'] )
 			);
@@ -132,12 +136,12 @@ if ( isset( $_POST['send_now_button'] ) ) {
 
 					if ( 'android' === $device_type && '' !== $only_android ) {
 						array_push(
-                            $all_user_devices,
-                            array(
-                                'token' => $device_token,
-                                'is_Android' => true
-                            )
-                        );
+							$all_user_devices,
+							array(
+								'token'      => $device_token,
+								'is_Android' => true
+							)
+						);
 					} elseif ( $device_type == 'ios' && $only_ios != '' ) {
 						array_push( $all_user_devices, array( 'token' => $device_token, 'is_IOS' => true ) );
 					}
@@ -162,7 +166,7 @@ if ( isset( $_POST['send_now_button'] ) ) {
 
 			if ( $error == false ) {
 				$push_notification_sender_api_obj = new Push_Notification_Sender_API();
-				$reg_id_chunk = array_chunk( $all_user_devices, 100 );
+				$reg_id_chunk                     = array_chunk( $all_user_devices, 100 );
 
 				foreach ( $reg_id_chunk as $reg_id ) {
 					$push_notification_sender_api_obj->send_notification( $reg_id, $message );
@@ -232,7 +236,8 @@ if ( isset( $_POST['send_now_button'] ) ) {
                                     <tr>
                                         <td><?php _e( 'Select Users' ) ?>:</td>
                                         <td>
-                                            <select title="Select User" id="selected_user" name="selected_user[]" multiple=multiple style="margin: 20px;width:300px;" required>
+                                            <select title="Select User" id="selected_user" name="selected_user[]"
+                                                    multiple=multiple style="margin: 20px;width:300px;" required>
 												<?php
 												foreach ( $all_users as $user ) {
 													echo '<option value=' . $user->ID . '>' . $user->user_nicename . '</option>';
@@ -255,7 +260,8 @@ if ( isset( $_POST['send_now_button'] ) ) {
                                     </tr>
                                     <tr>
                                         <td><?php _e( 'Message Text' ) ?>:</td>
-                                        <td><textarea title="Message" rows="5" cols="25" name="message_text" required></textarea></td>
+                                        <td><textarea title="Message" rows="5" cols="25" name="message_text"
+                                                      required></textarea></td>
                                     </tr>
                                     <tr>
                                         <td></td>
