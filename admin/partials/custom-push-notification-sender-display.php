@@ -17,66 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $wp, $wpdb;
 
 require_once plugin_dir_path( dirname( __FILE__ ) ) . '/api/class-push-notification-sender-api.php';
-?>
-<script>
-    jQuery(document).ready(function () { // initialize the pqSelect widget.
-        jQuery("#selected_user").pqSelect({
-            multiplePlaceholder: 'Select User',
-            checkbox: true // adds checkbox to options.
-        }).on("change", function (evt) {
-            var val = jQuery(this).val();
-        }).pqSelect('close');
-
-        // validate signup form on keyup and submit
-        jQuery("#custom_push_notification_form").validate({
-            ignore: '',
-            rules: {
-                'selected_user[]': {
-                    required: true
-                },
-                message_text: {
-                    required: true,
-                    maxlength: 235
-                },
-                msg_title: "required",
-                only_ios: {
-                    required: function () {
-                        if (jQuery("#only_android").prop('checked')) {
-                            return false;
-                        }
-                        return true;
-                    }
-                },
-                only_android: {
-                    required: function () {
-                        if (jQuery("#only_ios").prop('checked')) {
-                            return false;
-                        }
-                        return true;
-                    }
-                }
-            },
-            messages: {
-                'selected_user[]': "Please Select Users",
-                msg_title: "Please enter your Message title",
-                message_text: {
-                    required: "Please enter a Message",
-                    minlength: "Your Message Must not be more than 235 characters"
-                }
-            },
-            errorPlacement: function (error, element) {
-                jQuery(element).closest('tr').next().find('.error_label').html(error);
-            }
-        });
-
-    });
-</script>
-<?php
-$current_url  = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-$redirect_url = '?page=custom-push-notification-sender';
-
-$pns_users = $wpdb->prefix . 'users';
-$all_users = $wpdb->get_results( "SELECT ID, user_login, user_nicename FROM $pns_users" );
 
 $error         = false;
 $error_ios     = false;
@@ -179,7 +119,62 @@ if ( isset( $_POST['send_now_button'] ) ) {
 		}
 	}
 }
+$pns_users = $wpdb->prefix . 'users';
+$all_users = $wpdb->get_results( "SELECT ID, user_login, user_nicename FROM $pns_users" );
 ?>
+<script>
+    jQuery(document).ready(function () { // initialize the pqSelect widget.
+        jQuery("#selected_user").pqSelect({
+            multiplePlaceholder: 'Select User',
+            checkbox: true // adds checkbox to options.
+        }).on("change", function (evt) {
+            var val = jQuery(this).val();
+        }).pqSelect('close');
+
+        // validate signup form on keyup and submit
+        jQuery("#custom_push_notification_form").validate({
+            ignore: '',
+            rules: {
+                'selected_user[]': {
+                    required: true
+                },
+                message_text: {
+                    required: true,
+                    maxlength: 235
+                },
+                msg_title: "required",
+                only_ios: {
+                    required: function () {
+                        if (jQuery("#only_android").prop('checked')) {
+                            return false;
+                        }
+                        return true;
+                    }
+                },
+                only_android: {
+                    required: function () {
+                        if (jQuery("#only_ios").prop('checked')) {
+                            return false;
+                        }
+                        return true;
+                    }
+                }
+            },
+            messages: {
+                'selected_user[]': "Please Select Users",
+                msg_title: "Please enter your Message title",
+                message_text: {
+                    required: "Please enter a Message",
+                    minlength: "Your Message Must not be more than 235 characters"
+                }
+            },
+            errorPlacement: function (error, element) {
+                jQuery(element).closest('tr').next().find('.error_label').html(error);
+            }
+        });
+
+    });
+</script>
 <div class="wrap">
     <h2><?php _e( 'Send custom push notification to an user.', 'push-notifications-sender' ); ?></h2>
     <div id="poststuff" class="metabox-holder">

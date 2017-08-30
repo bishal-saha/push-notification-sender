@@ -22,8 +22,6 @@ global $wp;
 global $error;
 
 $error       = new WP_Error();
-$current_url = "//" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-$phpself_url = $_SERVER['PHP_SELF'];
 
 if ( isset( $_POST['is_submitted_general_tab'] ) && 'yes' === $_POST['is_submitted_general_tab'] ) {
 	if ( ! wp_verify_nonce( $_POST['pns_general_options'], 'pns_general_options' ) ) {
@@ -44,6 +42,9 @@ if ( isset( $_POST['is_submitted_general_tab'] ) && 'yes' === $_POST['is_submitt
 		save_android_options();
 	}
 }
+
+$current_url = "//" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+$phpself_url = $_SERVER['PHP_SELF'];
 
 ?>
     <table>
